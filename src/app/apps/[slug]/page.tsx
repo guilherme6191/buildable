@@ -1,0 +1,81 @@
+import { notFound } from "next/navigation";
+import { getAppBySlug, getConversation } from "@/lib/data";
+import { ChatInterface } from "@/components/chat-interface";
+import { PreviewWindow } from "@/components/preview-window";
+import Link from "next/link";
+import { ArrowLeft, Code } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Separator } from "@/components/ui/separator";
+
+interface AppDetailPageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export default async function AppDetailPage({ params }: AppDetailPageProps) {
+  const { slug } = await params;
+
+  try {
+    const app = await getAppBySlug(slug);
+
+    if (!app) {
+      console.log(`App not found or invalid slug: ${slug}`);
+      notFound();
+    }
+
+    const conversation = await getConversation(app.id);
+
+    return (
+      <div className="h-screen flex flex-col bg-background">
+        {/* Modern Header */}
+        <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button asChild variant="ghost" size="sm" className="gap-2">
+                  <Link href="/">
+                    <ArrowLeft className="w-4 h-4" />
+                    Back
+                  </Link>
+                </Button>
+                <Separator orientation="vertical" className="h-6" />
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <Code className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-lg font-semibold">{app.name}</h1>
+                    {app.description && (
+                      <p className="text-sm text-muted-foreground">
+                        {app.description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Modern Split Layout */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* Chat Panel */}
+          <div className="w-1/2 border-r border-border/50 bg-card">
+            <ChatInterface appId={app.id} conversation={conversation} />
+          </div>
+
+          {/* Preview Panel */}
+          <div className="w-1/2 bg-muted/30">
+            <PreviewWindow app={app} />
+          </div>
+        </div>
+      </div>
+    );
+  } catch (error) {
+    console.error("Error loading app detail page:", { slug, error });
+    notFound();
+  }
+}
