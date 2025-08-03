@@ -2,6 +2,11 @@ import { notFound } from "next/navigation";
 import { getAppBySlug, getConversation } from "@/lib/data";
 import { ChatInterface } from "@/components/chat-interface";
 import { PreviewWindow } from "@/components/preview-window";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 import Link from "next/link";
 import { ArrowLeft, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -59,13 +64,30 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
           </div>
         </header>
 
-        <div className="flex-1 flex overflow-hidden">
-          <div className="w-1/2 border-r border-border/50 bg-card">
-            <ChatInterface appId={app.id} conversation={conversation} />
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+          {/* Mobile: Stacked Layout */}
+          <div className="flex flex-col md:hidden h-full">
+            <div className="flex-1 overflow-y-auto">
+              <ChatInterface appId={app.id} conversation={conversation} />
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <PreviewWindow app={app} />
+            </div>
           </div>
-          <div className="w-1/2 bg-muted/30">
-            <PreviewWindow app={app} />
-          </div>
+
+          {/* Desktop: Resizable Layout */}
+          <ResizablePanelGroup
+            direction="horizontal"
+            className="hidden md:flex flex-1"
+          >
+            <ResizablePanel defaultSize={40} minSize={20} maxSize={70}>
+              <ChatInterface appId={app.id} conversation={conversation} />
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={60} minSize={40}>
+              <PreviewWindow app={app} />
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
       </div>
     );

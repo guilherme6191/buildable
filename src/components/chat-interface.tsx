@@ -55,14 +55,14 @@ export function ChatInterface({ appId, conversation }: ChatInterfaceProps) {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="p-6 border-b border-border/50">
+      <div className="p-4 md:p-6 border-b border-border/50">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold">AI Assistant</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-base md:text-lg font-semibold">AI Assistant</h2>
+            <p className="text-xs md:text-sm text-muted-foreground">
               Chat to build and modify your app
             </p>
           </div>
@@ -154,25 +154,27 @@ export function ChatInterface({ appId, conversation }: ChatInterfaceProps) {
         )}
       </div>
 
-      <div className="p-4 border-t border-border/50 bg-card">
-        <form onSubmit={handleSubmit} className="flex gap-3 items-center">
+      <div className="p-3 md:p-4 border-t border-border/50 bg-card">
+        <form onSubmit={handleSubmit} className="flex gap-2 md:gap-3 items-center">
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Describe what you want to build or change..."
             disabled={isLoading}
+            className="text-sm md:text-base"
           />
           <Button
             type="submit"
             disabled={!message.trim() || isLoading}
-            className="gap-2 min-w-[80px]"
+            className="gap-1 md:gap-2 min-w-[60px] md:min-w-[80px] text-sm md:text-base"
+            size="sm"
           >
             {isLoading ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <div className="w-3 h-3 md:w-4 md:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <Send className="w-4 h-4" />
-                Send
+                <Send className="w-3 h-3 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">Send</span>
               </>
             )}
           </Button>
