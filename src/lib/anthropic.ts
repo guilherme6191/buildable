@@ -29,11 +29,8 @@ export async function generateAppCode(
     currentJs || "",
   );
 
-  // Build the conversation messages for Anthropic
   const messages: Anthropic.Messages.MessageParam[] = [];
-
-  // Add conversation history (excluding the current message which we'll add separately)
-  const historyMessages = conversationHistory.slice(0, -1); // Remove the last message (current user message)
+  const historyMessages = conversationHistory.slice(0, -1);
 
   for (const msg of historyMessages) {
     messages.push({
@@ -61,10 +58,7 @@ export async function generateAppCode(
       throw new Error("Unexpected response type from Anthropic");
     }
 
-    // Extract JSON from the response - try to find the most complete JSON object
     let jsonStr = content.text.trim();
-
-    // If the response is wrapped in code blocks, extract the content
     if (jsonStr.startsWith("```")) {
       const codeBlockMatch = jsonStr.match(
         /```(?:json)?\s*(\{[\s\S]*?\})\s*```/,
@@ -74,10 +68,8 @@ export async function generateAppCode(
       }
     }
 
-    // Try to find a JSON object in the response
     const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      // If no JSON found, create a response with the explanation
       return {
         explanation: content.text,
       };
@@ -93,7 +85,7 @@ export async function generateAppCode(
         jsonMatch[0].substring(0, 200) + "...",
       );
 
-      // If JSON parsing fails, try to extract information manually
+
       const html = extractField(content.text, "html");
       const css = extractField(content.text, "css");
       const js = extractField(content.text, "js");

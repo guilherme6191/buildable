@@ -42,18 +42,15 @@ export async function getApp(id: string): Promise<App | null> {
       .single();
 
     if (error) {
-      // Handle different types of errors
       if (error.code === "PGRST116") {
-        console.log(`App not found with ID: ${id}`);
-        return null; // Not found
+        return null;
       }
 
       if (error.code === "22P02") {
-        console.log(`Invalid UUID format for app ID: ${id}`);
-        return null; // Invalid UUID format
+        return null;
       }
 
-      // Log other database errors but don't crash
+
       console.error("Database error fetching app:", {
         id,
         error: error.message,
@@ -91,13 +88,9 @@ export async function getAppBySlug(slug: string): Promise<App | null> {
       .single();
 
     if (error) {
-      // Handle different types of errors
       if (error.code === "PGRST116") {
-        console.log(`App not found with slug: ${slug}`);
-        return null; // Not found
+        return null;
       }
-
-      // Log other database errors but don't crash
       console.error("Database error fetching app by slug:", {
         slug,
         error: error.message,
@@ -130,11 +123,11 @@ export async function getAppBySlug(slug: string): Promise<App | null> {
 }
 
 export async function createApp(appData: CreateAppData): Promise<App> {
-  // Generate slug from name if not provided
+
   const { generateSlug, ensureUniqueSlug } = await import("./utils");
   let slug = appData.slug || generateSlug(appData.name);
 
-  // Ensure slug is unique
+
   const { data: existingApps } = await supabase.from("apps").select("slug");
 
   if (existingApps) {
@@ -229,7 +222,7 @@ export async function updateApp(
 
   if (error) {
     if (error.code === "PGRST116") {
-      return null; // Not found
+      return null;
     }
     console.error("Error updating app:", error);
     throw new Error("Failed to update app");
@@ -270,7 +263,7 @@ export async function getConversation(appId: string): Promise<Conversation> {
       .order("created_at", { ascending: true });
 
     if (error) {
-      // Log the error but return empty conversation rather than crashing
+  
       console.error("Database error fetching conversation:", {
         appId,
         error: error.message,
@@ -278,7 +271,7 @@ export async function getConversation(appId: string): Promise<Conversation> {
         details: error.details,
       });
 
-      // Return empty conversation for invalid UUIDs or other errors
+  
       return { appId, messages: [] };
     }
 

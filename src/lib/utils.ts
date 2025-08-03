@@ -18,12 +18,10 @@ export function generateId(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }
 
-// Helper function to extract fields from malformed JSON responses
 export function extractField(
   text: string,
   fieldName: string,
 ): string | undefined {
-  // Try standard JSON field first
   const jsonPattern = new RegExp(
     '"' + fieldName + '"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"',
   );
@@ -31,8 +29,6 @@ export function extractField(
   if (jsonMatch && jsonMatch[1]) {
     return jsonMatch[1];
   }
-
-  // Try to find field with backticks
   const backtickStart = text.indexOf('"' + fieldName + '":');
   if (backtickStart !== -1) {
     const afterColon = text.substring(backtickStart + fieldName.length + 3);
@@ -45,17 +41,15 @@ export function extractField(
   return undefined;
 }
 
-// Generate URL-friendly slug from text
 export function generateSlug(text: string): string {
   return text
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, "") // Remove special characters
-    .replace(/[\s_-]+/g, "-") // Replace spaces/underscores with hyphens
-    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
-// Ensure slug is unique by adding suffix if needed
 export function ensureUniqueSlug(
   baseSlug: string,
   existingSlugs: string[],
@@ -71,7 +65,6 @@ export function ensureUniqueSlug(
   return slug;
 }
 
-// Generate short ID for uniqueness
 export function generateShortId(): string {
   return Math.random().toString(36).substring(2, 8);
 }

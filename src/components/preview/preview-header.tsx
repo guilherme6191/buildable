@@ -47,7 +47,6 @@ export function PreviewHeader({
   return (
     <div className="p-3 md:p-4 lg:p-6 border-b border-border/50 bg-card">
       <div className="flex items-center justify-between gap-2">
-        {/* Left side - Icon and title */}
         <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
           <div className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0">
             <span className="w-3.5 h-3.5 md:w-4 md:h-4 lg:w-5 lg:h-5 text-white">
@@ -66,9 +65,7 @@ export function PreviewHeader({
           </div>
         </div>
 
-        {/* Right side - Controls */}
         <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
-          {/* Responsive tab buttons */}
           <div className="flex items-center gap-1 md:gap-2">
             <div className="flex bg-muted/50 p-0.5 md:p-1 rounded-md md:rounded-lg">
               {(["preview", "html", "css", "js"] as const).map((mode) => (
@@ -80,7 +77,6 @@ export function PreviewHeader({
                   className="h-7 md:h-8 px-1.5 md:px-2 lg:px-3 text-xs lg:text-sm gap-0.5 md:gap-1 lg:gap-2 min-w-0"
                 >
                   <span className="flex-shrink-0">{getViewModeIcon(mode)}</span>
-                  {/* Show text labels based on container size */}
                   <span className="capitalize hidden [@media(min-width:400px)]:inline lg:inline">
                     {mode}
                   </span>
@@ -88,7 +84,6 @@ export function PreviewHeader({
               ))}
             </div>
 
-            {/* Action button - refresh for preview, copy for files */}
             <Button
               variant="ghost"
               size="sm"

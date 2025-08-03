@@ -43,7 +43,7 @@ export function DownloadProjectButton({
       app.slug || app.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
     let downloadCount = 0;
 
-    // Create and download complete HTML file (with embedded CSS and JS)
+
     if (html.trim() || css.trim() || (js && js.trim())) {
       const completeHTML = createCompleteHTML();
       const htmlBlob = new Blob([completeHTML], { type: "text/html" });
@@ -56,7 +56,7 @@ export function DownloadProjectButton({
       downloadCount++;
     }
 
-    // Create and download separate CSS file
+
     if (css.trim()) {
       const cssBlob = new Blob([css], { type: "text/css" });
       const cssUrl = URL.createObjectURL(cssBlob);
@@ -68,7 +68,7 @@ export function DownloadProjectButton({
       downloadCount++;
     }
 
-    // Create and download separate JS file
+
     if (js && js.trim()) {
       const jsBlob = new Blob([js], { type: "text/javascript" });
       const jsUrl = URL.createObjectURL(jsBlob);
@@ -80,10 +80,7 @@ export function DownloadProjectButton({
       downloadCount++;
     }
 
-    // Show feedback
-    if (downloadCount > 0) {
-      console.log(`Downloaded ${downloadCount} project file(s) successfully!`);
-    } else {
+    if (downloadCount === 0) {
       alert("No content found in project files to download.");
     }
   };

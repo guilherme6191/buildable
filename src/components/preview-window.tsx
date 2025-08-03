@@ -121,7 +121,7 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
 
   const copyToClipboard = async () => {
     if (viewMode === "preview") {
-      return; // Don't copy preview mode
+      return;
     }
 
     const content = getFileContent(viewMode);
@@ -129,7 +129,7 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
       !content ||
       (content.includes("No ") && content.includes("content yet"))
     ) {
-      return; // Don't copy placeholder content
+      return;
     }
 
     try {
@@ -138,7 +138,7 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
-      // Fallback for older browsers
+
       const textArea = document.createElement("textarea");
       textArea.value = content;
       document.body.appendChild(textArea);

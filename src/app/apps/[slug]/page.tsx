@@ -25,7 +25,6 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
     const app = await getAppBySlug(slug);
 
     if (!app) {
-      console.log(`App not found or invalid slug: ${slug}`);
       notFound();
     }
 
@@ -67,7 +66,6 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
         </header>
 
         <div className="flex-1 flex flex-col md:flex-row md:overflow-hidden">
-          {/* Mobile: Stacked Layout */}
           <div className="flex flex-col md:hidden h-full">
             <div className="flex-1 overflow-y-auto">
               <ChatInterface appId={app.id} conversation={conversation} />
@@ -77,7 +75,6 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
             </div>
           </div>
 
-          {/* Desktop: Resizable Layout */}
           <ResizablePanelGroup
             direction="horizontal"
             className="hidden md:flex flex-1"

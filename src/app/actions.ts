@@ -16,19 +16,12 @@ export async function createAppAction(formData: FormData) {
       throw new Error("App name is required");
     }
 
-    console.log("Creating new app:", { name: name.trim() });
-
     const appData: CreateAppData = {
       name: name.trim(),
       description: description?.trim() || undefined,
     };
 
     const app = await createApp(appData);
-    console.log("Created app successfully:", {
-      id: app.id,
-      slug: app.slug,
-      name: app.name,
-    });
 
     revalidatePath("/");
     redirect(`/apps/${app.slug}`);
@@ -79,7 +72,7 @@ export async function sendMessageAction(appId: string, message: string) {
       throw new Error("Message is required");
     }
 
-    console.log("Sending message:", { appId, messageLength: message.length });
+  
 
     await addMessage(appId, "user", message.trim());
 
