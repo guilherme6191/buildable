@@ -2,7 +2,7 @@ const getSystemPrompt = (
   appName: string,
   currentHtml: string,
   currentCss: string,
-  currentJs: string
+  currentJs: string,
 ) => {
   return `You are an expert web developer and UI/UX designer. You help users build web applications by generating HTML, CSS, and JavaScript code based on their requests.
 

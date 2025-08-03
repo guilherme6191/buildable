@@ -43,7 +43,6 @@ export function DownloadProjectButton({
       app.slug || app.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
     let downloadCount = 0;
 
-
     if (html.trim() || css.trim() || (js && js.trim())) {
       const completeHTML = createCompleteHTML();
       const htmlBlob = new Blob([completeHTML], { type: "text/html" });
@@ -56,7 +55,6 @@ export function DownloadProjectButton({
       downloadCount++;
     }
 
-
     if (css.trim()) {
       const cssBlob = new Blob([css], { type: "text/css" });
       const cssUrl = URL.createObjectURL(cssBlob);
@@ -67,7 +65,6 @@ export function DownloadProjectButton({
       URL.revokeObjectURL(cssUrl);
       downloadCount++;
     }
-
 
     if (js && js.trim()) {
       const jsBlob = new Blob([js], { type: "text/javascript" });

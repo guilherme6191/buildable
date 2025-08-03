@@ -55,7 +55,7 @@ export async function updateAppPreviewAction(
   id: string,
   html: string,
   css: string,
-  js?: string
+  js?: string,
 ) {
   const updateData: UpdateAppData = {
     preview: { html, css, js },
@@ -71,8 +71,6 @@ export async function sendMessageAction(appId: string, message: string) {
       console.error("Empty message sent to sendMessageAction:", { appId });
       throw new Error("Message is required");
     }
-
-  
 
     await addMessage(appId, "user", message.trim());
 
@@ -94,7 +92,7 @@ export async function sendMessageAction(appId: string, message: string) {
         app.preview?.html,
         app.preview?.css,
         app.preview?.js,
-        app.name
+        app.name,
       );
 
       await addMessage(appId, "assistant", result.explanation);
@@ -104,7 +102,7 @@ export async function sendMessageAction(appId: string, message: string) {
           appId,
           result.html || app.preview?.html || "",
           result.css || app.preview?.css || "",
-          result.js || app.preview?.js
+          result.js || app.preview?.js,
         );
       }
     } catch (error) {
@@ -114,7 +112,7 @@ export async function sendMessageAction(appId: string, message: string) {
         await addMessage(
           appId,
           "assistant",
-          "Sorry, I encountered an error processing your request. Please try again."
+          "Sorry, I encountered an error processing your request. Please try again.",
         );
       } catch (messageError) {
         console.error("Failed to add error message:", { appId, messageError });

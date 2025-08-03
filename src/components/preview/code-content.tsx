@@ -10,8 +10,7 @@ export function CodeContent({ content, language }: CodeContentProps) {
         <div className="h-8 md:h-10 bg-muted/50 border-b border-border/50 flex items-center px-3 md:px-4">
           <div className="flex items-center gap-2">
             <span className="text-xs md:text-sm font-medium text-muted-foreground">
-              {language}-file.{language === "js" ? "js" : language}{" "}
-              (read-only)
+              {language}-file.{language === "js" ? "js" : language} (read-only)
             </span>
           </div>
         </div>

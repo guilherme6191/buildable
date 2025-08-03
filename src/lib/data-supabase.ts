@@ -50,7 +50,6 @@ export async function getApp(id: string): Promise<App | null> {
         return null;
       }
 
-
       console.error("Database error fetching app:", {
         id,
         error: error.message,
@@ -123,10 +122,8 @@ export async function getAppBySlug(slug: string): Promise<App | null> {
 }
 
 export async function createApp(appData: CreateAppData): Promise<App> {
-
   const { generateSlug, ensureUniqueSlug } = await import("./utils");
   let slug = appData.slug || generateSlug(appData.name);
-
 
   const { data: existingApps } = await supabase.from("apps").select("slug");
 
@@ -199,7 +196,7 @@ export async function createApp(appData: CreateAppData): Promise<App> {
 
 export async function updateApp(
   id: string,
-  updateData: UpdateAppData
+  updateData: UpdateAppData,
 ): Promise<App | null> {
   const updates: Record<string, unknown> = {};
 
@@ -263,7 +260,6 @@ export async function getConversation(appId: string): Promise<Conversation> {
       .order("created_at", { ascending: true });
 
     if (error) {
-  
       console.error("Database error fetching conversation:", {
         appId,
         error: error.message,
@@ -271,7 +267,6 @@ export async function getConversation(appId: string): Promise<Conversation> {
         details: error.details,
       });
 
-  
       return { appId, messages: [] };
     }
 
@@ -296,7 +291,7 @@ export async function getConversation(appId: string): Promise<Conversation> {
 export async function addMessage(
   appId: string,
   role: "user" | "assistant",
-  content: string
+  content: string,
 ): Promise<Message> {
   try {
     const { data, error } = await supabase

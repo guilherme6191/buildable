@@ -85,7 +85,6 @@ export async function generateAppCode(
         jsonMatch[0].substring(0, 200) + "...",
       );
 
-
       const html = extractField(content.text, "html");
       const css = extractField(content.text, "css");
       const js = extractField(content.text, "js");
