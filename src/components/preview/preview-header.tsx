@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Eye,
   RefreshCw,
@@ -77,7 +78,12 @@ export function PreviewHeader({
                   className="h-7 md:h-8 px-1.5 md:px-2 lg:px-3 text-xs lg:text-sm gap-0.5 md:gap-1 lg:gap-2 min-w-0"
                 >
                   <span className="flex-shrink-0">{getViewModeIcon(mode)}</span>
-                  <span className="capitalize hidden [@media(min-width:400px)]:inline lg:inline">
+                  <span
+                    className={cn(
+                      "hidden [@media(min-width:400px)]:inline lg:inline",
+                      mode === "preview" ? "capitalize" : "uppercase"
+                    )}
+                  >
                     {mode}
                   </span>
                 </Button>
