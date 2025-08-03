@@ -53,33 +53,33 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
                 background-clip: text;
               }
               p { 
-                font-size: 1.1rem;
+                font-size: 1.1rem; 
+                opacity: 0.9; 
                 line-height: 1.6; 
-                opacity: 0.9;
-                margin-bottom: 1.5rem;
+                margin-bottom: 2rem; 
               }
-              .cta {
-                display: inline-block;
-                padding: 0.75rem 1.5rem;
-                background: rgba(255, 255, 255, 0.2);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 0.5rem;
-                color: white;
-                text-decoration: none;
-                font-weight: 500;
+              .cta { 
+                background: rgba(255, 255, 255, 0.2); 
+                padding: 0.75rem 1.5rem; 
+                border-radius: 0.5rem; 
+                border: 1px solid rgba(255, 255, 255, 0.3); 
+                color: white; 
+                text-decoration: none; 
+                font-weight: 500; 
                 transition: all 0.3s ease;
+                display: inline-block;
               }
-              .cta:hover {
-                background: rgba(255, 255, 255, 0.3);
-                transform: translateY(-2px);
+              .cta:hover { 
+                background: rgba(255, 255, 255, 0.3); 
+                transform: translateY(-2px); 
               }
             </style>
           </head>
           <body>
             <div class="container">
-              <h1>Welcome to ${app.name}</h1>
-              <p>Your app is ready to be built! Start chatting with the AI assistant to bring your vision to life. Describe what you want to create and watch the magic happen.</p>
-              <a href="#" class="cta">Start Building →</a>
+              <h1>${app.name}</h1>
+              <p>Your app is ready to be built! Start chatting with the AI to create your application.</p>
+              <a href="#" class="cta">Get Started</a>
             </div>
           </body>
         </html>
@@ -87,14 +87,13 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
     }
 
     return `
-      <html>
+      <!DOCTYPE html>
+      <html lang="en">
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <title>${app.name}</title>
-          <style>
-            ${app.preview.css || ""}
-          </style>
+          <style>${app.preview.css}</style>
         </head>
         <body>
           ${app.preview.html}
@@ -132,7 +131,6 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
@@ -153,7 +151,7 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
               <p className="text-sm text-muted-foreground">
                 {viewMode === "preview"
                   ? "See your changes in real-time"
-                  : `View ${viewMode.toUpperCase()} source code`}
+                  : `View ${viewMode.toUpperCase()} source code (read-only)`}
               </p>
             </div>
           </div>
@@ -212,7 +210,7 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
                 className="w-full border-0"
                 style={{ height: "calc(100% - 40px)" }}
                 title={`${app.name} Preview`}
-                sandbox="allow-scripts allow-same-origin"
+                sandbox="allow-scripts allow-forms"
               />
             </div>
           </div>
@@ -223,7 +221,7 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
                 <div className="flex items-center gap-2">
                   {getViewModeIcon(viewMode)}
                   <span className="text-sm font-medium text-muted-foreground">
-                    {viewMode}.{viewMode === "js" ? "js" : viewMode}
+                    {viewMode}.{viewMode === "js" ? "js" : viewMode} (read-only)
                   </span>
                 </div>
               </div>
