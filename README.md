@@ -1,6 +1,6 @@
-# Buildable - AI-Powered App Builder
+# buildable - AI-Powered vanilla web app builder
 
-A Lovable clone that lets you build web applications through AI chat interactions.
+A high-level Lovable clone that lets you build vanilla web applications through AI chat interactions.
 
 ## Setup
 
