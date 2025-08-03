@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   title: "Buildable - AI-Powered App Builder",
   description:
     "Build applications with AI assistance. Chat with AI to create, modify, and iterate on your web apps in real-time.",
+
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({
