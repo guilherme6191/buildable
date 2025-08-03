@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getAppBySlug, getConversation } from "@/lib/data";
 import { ChatInterface } from "@/components/chat-interface";
-import { PreviewWindow } from "@/components/preview-window";
+import { PreviewWindow } from "@/components/preview";
 import { DownloadProjectButton } from "@/components/download-project-button";
 import { AppForm } from "@/components/app-form";
 import {

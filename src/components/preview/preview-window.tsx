@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { App } from "@/lib/types";
 import {
-  PreviewHeader,
+  PreviewHeader,  
   PreviewContent,
   CodeContent,
   type ViewMode,
-} from "./preview";
+} from ".";
 import { getEmptyAppTemplate, createAppPreviewDocument } from "@/lib/templates";
 import { TIMING } from "@/lib/constants";
 import { logError } from "@/lib/error-handling";
