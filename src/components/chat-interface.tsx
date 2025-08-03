@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Conversation } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { sendMessageAction } from "@/app/actions";
+import { logError } from "@/lib/error-handling";
 
 interface ChatInterfaceProps {
   appId: string;
@@ -37,10 +38,9 @@ export function ChatInterface({ appId, conversation }: ChatInterfaceProps) {
     try {
       await sendMessageAction(appId, currentMessage);
     } catch (error) {
-      console.error("Failed to send message:", {
+      logError("sending message", error, {
         appId,
-        message: currentMessage,
-        error,
+        messagePreview: currentMessage.substring(0, 50) + "...",
       });
 
       const errorMessage =

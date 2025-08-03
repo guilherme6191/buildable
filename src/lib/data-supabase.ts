@@ -6,6 +6,8 @@ import {
   CreateAppData,
   UpdateAppData,
 } from "./types";
+import { getDefaultPreviewTemplate } from "./templates";
+import { logError, handleDatabaseError, isNotFoundError, isInvalidUUIDError } from "./error-handling";
 
 export async function getApps(): Promise<App[]> {
   const { data, error } = await supabase
@@ -14,7 +16,7 @@ export async function getApps(): Promise<App[]> {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Error fetching apps:", error);
+    logError("fetching apps", error);
     throw new Error("Failed to fetch apps");
   }
 
@@ -42,21 +44,10 @@ export async function getApp(id: string): Promise<App | null> {
       .single();
 
     if (error) {
-      if (error.code === "PGRST116") {
+      if (isNotFoundError(error) || isInvalidUUIDError(error)) {
         return null;
       }
-
-      if (error.code === "22P02") {
-        return null;
-      }
-
-      console.error("Database error fetching app:", {
-        id,
-        error: error.message,
-        code: error.code,
-        details: error.details,
-      });
-      return null;
+      return handleDatabaseError("fetching app", error, id);
     }
 
     return {
@@ -73,8 +64,7 @@ export async function getApp(id: string): Promise<App | null> {
       },
     };
   } catch (err) {
-    console.error("Unexpected error fetching app:", { id, error: err });
-    return null;
+    return handleDatabaseError("fetching app (unexpected)", err, id);
   }
 }
 
@@ -87,16 +77,10 @@ export async function getAppBySlug(slug: string): Promise<App | null> {
       .single();
 
     if (error) {
-      if (error.code === "PGRST116") {
+      if (isNotFoundError(error)) {
         return null;
       }
-      console.error("Database error fetching app by slug:", {
-        slug,
-        error: error.message,
-        code: error.code,
-        details: error.details,
-      });
-      return null;
+      return handleDatabaseError("fetching app by slug", error, slug);
     }
 
     return {
@@ -113,11 +97,7 @@ export async function getAppBySlug(slug: string): Promise<App | null> {
       },
     };
   } catch (err) {
-    console.error("Unexpected error fetching app by slug:", {
-      slug,
-      error: err,
-    });
-    return null;
+    return handleDatabaseError("fetching app by slug (unexpected)", err, slug);
   }
 }
 
@@ -132,34 +112,7 @@ export async function createApp(appData: CreateAppData): Promise<App> {
     slug = ensureUniqueSlug(slug, existingSlugs);
   }
 
-  const defaultPreview = {
-    html: `<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-8">
-      <div class="text-center max-w-2xl">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to ${appData.name}</h1>
-        <p class="text-lg text-gray-600 mb-8">Start building your app by chatting with the AI assistant. Try asking to:</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-          <div class="bg-white p-4 rounded-lg shadow-sm">
-            <h3 class="font-semibold text-gray-900 mb-2">🎨 Design</h3>
-            <p class="text-sm text-gray-600">"Add a navigation bar" or "Make it more colorful"</p>
-          </div>
-          <div class="bg-white p-4 rounded-lg shadow-sm">
-            <h3 class="font-semibold text-gray-900 mb-2">🔧 Features</h3>
-            <p class="text-sm text-gray-600">"Create a contact form" or "Add a gallery"</p>
-          </div>
-          <div class="bg-white p-4 rounded-lg shadow-sm">
-            <h3 class="font-semibold text-gray-900 mb-2">📱 Layout</h3>
-            <p class="text-sm text-gray-600">"Make it responsive" or "Center the content"</p>
-          </div>
-          <div class="bg-white p-4 rounded-lg shadow-sm">
-            <h3 class="font-semibold text-gray-900 mb-2">✨ Polish</h3>
-            <p class="text-sm text-gray-600">"Add animations" or "Improve the typography"</p>
-          </div>
-        </div>
-      </div>
-    </div>`,
-    css: "body { font-family: system-ui, -apple-system, sans-serif; margin: 0; }",
-    js: "",
-  };
+  const defaultPreview = getDefaultPreviewTemplate(appData.name);
 
   const { data, error } = await supabase
     .from("apps")
@@ -175,7 +128,7 @@ export async function createApp(appData: CreateAppData): Promise<App> {
     .single();
 
   if (error) {
-    console.error("Error creating app:", error);
+    logError("creating app", error, { name: appData.name });
     throw new Error("Failed to create app");
   }
 
@@ -221,7 +174,7 @@ export async function updateApp(
     if (error.code === "PGRST116") {
       return null;
     }
-    console.error("Error updating app:", error);
+    logError("updating app", error, { id });
     throw new Error("Failed to update app");
   }
 
@@ -260,13 +213,7 @@ export async function getConversation(appId: string): Promise<Conversation> {
       .order("created_at", { ascending: true });
 
     if (error) {
-      console.error("Database error fetching conversation:", {
-        appId,
-        error: error.message,
-        code: error.code,
-        details: error.details,
-      });
-
+      logError("fetching conversation", error, { appId });
       return { appId, messages: [] };
     }
 
@@ -280,10 +227,7 @@ export async function getConversation(appId: string): Promise<Conversation> {
 
     return { appId, messages };
   } catch (err) {
-    console.error("Unexpected error fetching conversation:", {
-      appId,
-      error: err,
-    });
+    logError("fetching conversation (unexpected)", err, { appId });
     return { appId, messages: [] };
   }
 }
@@ -305,12 +249,10 @@ export async function addMessage(
       .single();
 
     if (error) {
-      console.error("Database error adding message:", {
-        appId,
-        role,
-        error: error.message,
-        code: error.code,
-        details: error.details,
+      logError("adding message", error, { 
+        appId, 
+        role, 
+        contentPreview: content.substring(0, 100) + "..." 
       });
       throw new Error("Failed to add message");
     }
@@ -323,10 +265,10 @@ export async function addMessage(
       appId: data.app_id,
     };
   } catch (err) {
-    console.error("Unexpected error adding message:", {
-      appId,
-      role,
-      error: err,
+    logError("adding message (unexpected)", err, { 
+      appId, 
+      role, 
+      contentPreview: content.substring(0, 100) + "..." 
     });
     throw err;
   }

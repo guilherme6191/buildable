@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createAppAction } from "@/app/actions";
+import { logError } from "@/lib/error-handling";
 
 export function CreateAppForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +31,7 @@ export function CreateAppForm() {
       setOpen(false);
       router.refresh();
     } catch (error) {
-      console.error("Failed to create app:", error);
+      logError("creating app from form", error);
     } finally {
       setIsLoading(false);
     }

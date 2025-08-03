@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { App } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { createCompleteHTMLDocument } from "@/lib/templates";
+import { downloadFiles, getProjectFiles } from "@/lib/file-utils";
 
 interface DownloadProjectButtonProps {
   app: App;
@@ -14,77 +16,38 @@ export function DownloadProjectButton({
   app,
   className,
 }: DownloadProjectButtonProps) {
-  const createCompleteHTML = () => {
-    const { html = "", css = "", js = "" } = app.preview!;
-
-    return `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${app.name}</title>
-    ${css.trim() ? `<style>${css}</style>` : ""}
-  </head>
-  <body>
-    ${html}
-    ${js && js.trim() ? `<script>${js}</script>` : ""}
-  </body>
-</html>`;
-  };
-
-  const downloadFiles = () => {
+  const handleDownload = () => {
     if (!app.preview) {
       alert("No project files to download yet. Create some content first!");
       return;
     }
 
-    const { html = "", css = "", js = "" } = app.preview;
-    const fileName =
-      app.slug || app.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
-    let downloadCount = 0;
-
-    if (html.trim() || css.trim() || (js && js.trim())) {
-      const completeHTML = createCompleteHTML();
-      const htmlBlob = new Blob([completeHTML], { type: "text/html" });
-      const htmlUrl = URL.createObjectURL(htmlBlob);
-      const htmlLink = document.createElement("a");
-      htmlLink.href = htmlUrl;
-      htmlLink.download = `${fileName}.html`;
-      htmlLink.click();
-      URL.revokeObjectURL(htmlUrl);
-      downloadCount++;
-    }
-
-    if (css.trim()) {
-      const cssBlob = new Blob([css], { type: "text/css" });
-      const cssUrl = URL.createObjectURL(cssBlob);
-      const cssLink = document.createElement("a");
-      cssLink.href = cssUrl;
-      cssLink.download = `${fileName}.css`;
-      cssLink.click();
-      URL.revokeObjectURL(cssUrl);
-      downloadCount++;
-    }
-
-    if (js && js.trim()) {
-      const jsBlob = new Blob([js], { type: "text/javascript" });
-      const jsUrl = URL.createObjectURL(jsBlob);
-      const jsLink = document.createElement("a");
-      jsLink.href = jsUrl;
-      jsLink.download = `${fileName}.js`;
-      jsLink.click();
-      URL.revokeObjectURL(jsUrl);
-      downloadCount++;
-    }
-
-    if (downloadCount === 0) {
+    const files = getProjectFiles(app);
+    
+    if (files.length === 0) {
       alert("No content found in project files to download.");
+      return;
     }
+
+    // Add complete HTML file with embedded CSS and JS
+    const { html = "", css = "", js = "" } = app.preview;
+    if (html.trim() || css.trim() || js?.trim()) {
+      const completeHTML = createCompleteHTMLDocument(app.name, html, css, js);
+      const baseFilename = app.slug || app.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
+      
+      files.unshift({
+        content: completeHTML,
+        filename: `${baseFilename}.html`,
+        type: "text/html"
+      });
+    }
+
+    downloadFiles(files);
   };
 
   return (
     <Button
-      onClick={downloadFiles}
+      onClick={handleDownload}
       variant="outline"
       size="sm"
       className={cn("gap-2", className)}

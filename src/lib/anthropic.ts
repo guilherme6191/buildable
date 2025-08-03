@@ -2,6 +2,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { Message } from "./types";
 import { getSystemPrompt } from "./prompt";
 import { extractField } from "./utils";
+import { AI } from "./constants";
+import { logError } from "./error-handling";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -46,9 +48,9 @@ export async function generateAppCode(
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20241022",
-      max_tokens: 4000,
-      temperature: 0.7,
+      model: AI.MODEL,
+      max_tokens: AI.MAX_TOKENS,
+      temperature: AI.TEMPERATURE,
       system: systemPrompt,
       messages,
     });
@@ -79,11 +81,9 @@ export async function generateAppCode(
       const result = JSON.parse(jsonMatch[0]) as GenerateCodeResponse;
       return result;
     } catch (parseError) {
-      console.error("JSON parsing failed:", parseError);
-      console.error(
-        "Attempted to parse:",
-        jsonMatch[0].substring(0, 200) + "...",
-      );
+      logError("JSON parsing", parseError, {
+        attempted: jsonMatch[0].substring(0, 200) + "...",
+      });
 
       const html = extractField(content.text, "html");
       const css = extractField(content.text, "css");
@@ -100,7 +100,7 @@ export async function generateAppCode(
       };
     }
   } catch (error) {
-    console.error("Error calling Anthropic API:", error);
+    logError("Anthropic API call", error);
     return {
       explanation:
         "Sorry, I encountered an error processing your request. Please try again.",

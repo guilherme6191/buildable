@@ -1,3 +1,5 @@
+import { SANDBOX_PERMISSIONS } from "@/lib/constants";
+
 interface PreviewContentProps {
   content: string;
 }
@@ -22,7 +24,7 @@ export function PreviewContent({ content }: PreviewContentProps) {
           srcDoc={content}
           className="w-full border-0"
           style={{ height: "calc(100% - 32px)" }}
-          sandbox="allow-scripts allow-forms"
+          sandbox={SANDBOX_PERMISSIONS}
           title="App Preview"
         />
       </div>

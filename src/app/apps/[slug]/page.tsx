@@ -13,6 +13,7 @@ import { ArrowLeft, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Separator } from "@/components/ui/separator";
+import { logError } from "@/lib/error-handling";
 
 interface AppDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -83,7 +84,7 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
               <ChatInterface appId={app.id} conversation={conversation} />
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={60} minSize={40}>
+            <ResizablePanel defaultSize={60} minSize={41}>
               <PreviewWindow app={app} />
             </ResizablePanel>
           </ResizablePanelGroup>
@@ -91,7 +92,7 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
       </div>
     );
   } catch (error) {
-    console.error("Error loading app detail page:", { slug, error });
+    logError("loading app detail page", error, { slug });
     notFound();
   }
 }
