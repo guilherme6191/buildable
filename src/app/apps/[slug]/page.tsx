@@ -56,7 +56,7 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
                       </p>
                     )}
                   </div>
-                  <DownloadProjectButton app={app} />
+                  <DownloadProjectButton app={app} className="ml-4" />
                 </div>
               </div>
               <div className="flex items-center gap-2">

@@ -1,19 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, RefreshCw, FileText, Palette, Zap } from "lucide-react";
 import { App } from "@/lib/types";
-import { Button } from "@/components/ui/button";
+import {
+  PreviewHeader,
+  PreviewContent,
+  CodeContent,
+  type ViewMode,
+} from "./preview";
 
 interface PreviewWindowProps {
   app: App;
 }
 
-type ViewMode = "preview" | "html" | "css" | "js";
-
 export function PreviewWindow({ app }: PreviewWindowProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("preview");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const getPreviewContent = () => {
     if (!app.preview) {
@@ -103,19 +106,6 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
     `;
   };
 
-  const getViewModeIcon = (mode: ViewMode) => {
-    switch (mode) {
-      case "html":
-        return <FileText className="w-full h-full" />;
-      case "css":
-        return <Palette className="w-full h-full" />;
-      case "js":
-        return <Zap className="w-full h-full" />;
-      default:
-        return <Eye className="w-full h-full" />;
-    }
-  };
-
   const getFileContent = (mode: ViewMode): string => {
     switch (mode) {
       case "html":
@@ -129,123 +119,70 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
     }
   };
 
+  const copyToClipboard = async () => {
+    if (viewMode === "preview") {
+      return; // Don't copy preview mode
+    }
+
+    const content = getFileContent(viewMode);
+    if (
+      !content ||
+      (content.includes("No ") && content.includes("content yet"))
+    ) {
+      return; // Don't copy placeholder content
+    }
+
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = content;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
+      } catch (fallbackErr) {
+        console.error("Fallback copy failed:", fallbackErr);
+      }
+      document.body.removeChild(textArea);
+    }
+  };
+
   const handleRefresh = () => {
     setIsRefreshing(true);
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
+  const renderContent = () => {
+    if (viewMode === "preview") {
+      return <PreviewContent content={getPreviewContent()} />;
+    }
+
+    return (
+      <CodeContent content={getFileContent(viewMode)} language={viewMode} />
+    );
+  };
+
   return (
     <div className="h-full flex flex-col">
-      <div className="p-3 md:p-4 lg:p-6 border-b border-border/50 bg-card">
-        <div className="flex items-center justify-between gap-2">
-          {/* Left side - Icon and title */}
-          <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
-            <div className="w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0">
-              <span className="w-3.5 h-3.5 md:w-4 md:h-4 lg:w-5 lg:h-5 text-white">
-                {getViewModeIcon(viewMode)}
-              </span>
-            </div>
-            <div className="min-w-0 flex-1">
-              <h2 className="text-sm md:text-base lg:text-lg font-semibold truncate">
-                {viewMode === "preview"
-                  ? "Live Preview"
-                  : viewMode.toUpperCase()}
-              </h2>
-              <p className="text-xs text-muted-foreground truncate hidden sm:block">
-                {viewMode === "preview"
-                  ? "See your changes in real-time"
-                  : `View ${viewMode.toUpperCase()} source code (read-only)`}
-              </p>
-            </div>
-          </div>
-
-          {/* Right side - Controls */}
-          <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
-            {viewMode === "preview" && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                className="gap-1 md:gap-2 px-2 md:px-3"
-              >
-                <RefreshCw
-                  className={`w-3 h-3 md:w-4 md:h-4 ${isRefreshing ? "animate-spin" : ""}`}
-                />
-                <span className="hidden lg:inline text-xs md:text-sm">
-                  Refresh
-                </span>
-              </Button>
-            )}
-
-            {/* Responsive tab buttons */}
-            <div className="flex bg-muted/50 p-0.5 md:p-1 rounded-md md:rounded-lg">
-              {(["preview", "html", "css", "js"] as const).map((mode) => (
-                <Button
-                  key={mode}
-                  variant={viewMode === mode ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setViewMode(mode)}
-                  className="h-7 md:h-8 px-1.5 md:px-2 lg:px-3 text-xs lg:text-sm gap-0.5 md:gap-1 lg:gap-2 min-w-0"
-                >
-                  <span className="flex-shrink-0">{getViewModeIcon(mode)}</span>
-                  {/* Show text labels based on container size */}
-                  <span className="capitalize hidden [@media(min-width:400px)]:inline lg:inline">
-                    {mode}
-                  </span>
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      <PreviewHeader
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        onRefresh={handleRefresh}
+        onCopy={copyToClipboard}
+        isRefreshing={isRefreshing}
+        copySuccess={copySuccess}
+        appName={app.name}
+      />
 
       <div className="flex-1 bg-gradient-to-br from-muted/20 via-background to-muted/10">
-        {viewMode === "preview" ? (
-          <div className="h-full p-3 md:p-6">
-            <div className="h-full bg-card rounded-lg md:rounded-xl shadow-lg md:shadow-2xl overflow-hidden border border-border/50">
-              <div className="h-8 md:h-10 bg-muted/50 border-b border-border/50 flex items-center px-3 md:px-4 gap-2">
-                <div className="flex gap-1.5 md:gap-2">
-                  <div className="w-2 h-2 md:w-3 md:h-3 bg-red-400 rounded-full"></div>
-                  <div className="w-2 h-2 md:w-3 md:h-3 bg-yellow-400 rounded-full"></div>
-                  <div className="w-2 h-2 md:w-3 md:h-3 bg-green-400 rounded-full"></div>
-                </div>
-                <div className="flex-1 flex justify-center">
-                  <div className="bg-background/50 px-2 md:px-3 py-0.5 md:py-1 rounded text-xs text-muted-foreground truncate">
-                    {app.name}
-                  </div>
-                </div>
-              </div>
-              <iframe
-                key={isRefreshing ? Date.now() : "static"}
-                srcDoc={getPreviewContent()}
-                className="w-full border-0"
-                style={{ height: "calc(100% - 32px)" }}
-                title={`${app.name} Preview`}
-                sandbox="allow-scripts allow-forms"
-              />
-            </div>
-          </div>
-        ) : (
-          <div className="h-full p-3 md:p-6">
-            <div className="h-full bg-card rounded-lg md:rounded-xl shadow-lg overflow-hidden border border-border/50">
-              <div className="h-8 md:h-10 bg-muted/50 border-b border-border/50 flex items-center px-3 md:px-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs md:text-sm font-medium text-muted-foreground">
-                    {viewMode}-file.{viewMode === "js" ? "js" : viewMode}{" "}
-                    (read-only)
-                  </span>
-                </div>
-              </div>
-              <pre
-                className="overflow-auto p-3 md:p-4 text-xs md:text-sm font-mono leading-relaxed text-foreground bg-background/50"
-                style={{ height: "calc(100% - 32px)" }}
-              >
-                <code>{getFileContent(viewMode)}</code>
-              </pre>
-            </div>
-          </div>
-        )}
+        {renderContent()}
       </div>
     </div>
   );

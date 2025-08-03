@@ -3,12 +3,17 @@
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { App } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 interface DownloadProjectButtonProps {
   app: App;
+  className?: string;
 }
 
-export function DownloadProjectButton({ app }: DownloadProjectButtonProps) {
+export function DownloadProjectButton({
+  app,
+  className,
+}: DownloadProjectButtonProps) {
   const createCompleteHTML = () => {
     const { html = "", css = "", js = "" } = app.preview!;
 
@@ -88,7 +93,7 @@ export function DownloadProjectButton({ app }: DownloadProjectButtonProps) {
       onClick={downloadFiles}
       variant="outline"
       size="sm"
-      className="gap-2"
+      className={cn("gap-2", className)}
     >
       <Download className="w-4 h-4" />
       <span className="hidden sm:inline">Download</span>

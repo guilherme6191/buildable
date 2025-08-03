@@ -206,7 +206,7 @@ export async function createApp(appData: CreateAppData): Promise<App> {
 
 export async function updateApp(
   id: string,
-  updateData: UpdateAppData,
+  updateData: UpdateAppData
 ): Promise<App | null> {
   const updates: Record<string, unknown> = {};
 
@@ -303,7 +303,7 @@ export async function getConversation(appId: string): Promise<Conversation> {
 export async function addMessage(
   appId: string,
   role: "user" | "assistant",
-  content: string,
+  content: string
 ): Promise<Message> {
   try {
     const { data, error } = await supabase
