@@ -11,7 +11,8 @@ export default function NotFound() {
         </CardHeader>
         <CardContent className="text-center space-y-4">
           <p className="text-gray-600 dark:text-gray-400">
-            The app you're looking for doesn't exist or may have been deleted.
+            The app you&apos;re looking for doesn&apos;t exist or may have been
+            deleted.
           </p>
           <div className="space-y-2">
             <p className="text-sm text-gray-500 dark:text-gray-500">
@@ -20,7 +21,7 @@ export default function NotFound() {
             <ul className="text-sm text-gray-500 dark:text-gray-500 list-disc list-inside space-y-1">
               <li>The app slug is invalid</li>
               <li>The app was deleted</li>
-              <li>You don't have access to this app</li>
+              <li>You don&apos;t have access to this app</li>
             </ul>
           </div>
           <div className="flex gap-2 justify-center">
