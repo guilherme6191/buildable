@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getAppBySlug, getConversation } from "@/lib/data";
 import { ChatInterface } from "@/components/chat-interface";
 import { PreviewWindow } from "@/components/preview-window";
+import { DownloadProjectButton } from "@/components/download-project-button";
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -55,6 +56,7 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
                       </p>
                     )}
                   </div>
+                  <DownloadProjectButton app={app} />
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -64,7 +66,7 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
           </div>
         </header>
 
-        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        <div className="flex-1 flex flex-col md:flex-row md:overflow-hidden">
           {/* Mobile: Stacked Layout */}
           <div className="flex flex-col md:hidden h-full">
             <div className="flex-1 overflow-y-auto">

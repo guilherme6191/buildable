@@ -155,7 +155,10 @@ export function ChatInterface({ appId, conversation }: ChatInterfaceProps) {
       </div>
 
       <div className="p-3 md:p-4 border-t border-border/50 bg-card">
-        <form onSubmit={handleSubmit} className="flex gap-2 md:gap-3 items-center">
+        <form
+          onSubmit={handleSubmit}
+          className="flex gap-2 md:gap-3 items-center"
+        >
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}

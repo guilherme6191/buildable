@@ -231,9 +231,9 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
             <div className="h-full bg-card rounded-lg md:rounded-xl shadow-lg overflow-hidden border border-border/50">
               <div className="h-8 md:h-10 bg-muted/50 border-b border-border/50 flex items-center px-3 md:px-4">
                 <div className="flex items-center gap-2">
-                  {getViewModeIcon(viewMode)}
                   <span className="text-xs md:text-sm font-medium text-muted-foreground">
-                    {viewMode}.{viewMode === "js" ? "js" : viewMode} (read-only)
+                    {viewMode}-file.{viewMode === "js" ? "js" : viewMode}{" "}
+                    (read-only)
                   </span>
                 </div>
               </div>
