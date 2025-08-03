@@ -38,7 +38,7 @@ export default async function HomePage() {
             buildable
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-            Transform your ideas into fully functional applications. Chat with
+            Transform your ideas into vanilla web MVPs. Chat with
             AI to create, modify, and iterate on your web apps in real-time.
           </p>
         </div>
