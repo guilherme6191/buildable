@@ -7,7 +7,12 @@ import {
   UpdateAppData,
 } from "./types";
 import { getDefaultPreviewTemplate } from "./templates";
-import { logError, handleDatabaseError, isNotFoundError, isInvalidUUIDError } from "./error-handling";
+import {
+  logError,
+  handleDatabaseError,
+  isNotFoundError,
+  isInvalidUUIDError,
+} from "./error-handling";
 
 export async function getApps(): Promise<App[]> {
   const { data, error } = await supabase
@@ -149,7 +154,7 @@ export async function createApp(appData: CreateAppData): Promise<App> {
 
 export async function updateApp(
   id: string,
-  updateData: UpdateAppData,
+  updateData: UpdateAppData
 ): Promise<App | null> {
   const updates: Record<string, unknown> = {};
 
@@ -194,14 +199,19 @@ export async function updateApp(
 }
 
 export async function deleteApp(id: string): Promise<boolean> {
-  const { error } = await supabase.from("apps").delete().eq("id", id);
+  try {
+    const { error } = await supabase.from("apps").delete().eq("id", id);
 
-  if (error) {
-    console.error("Error deleting app:", error);
-    throw new Error("Failed to delete app");
+    if (error) {
+      logError("deleting app", error, { id });
+      throw new Error("Failed to delete app");
+    }
+
+    return true;
+  } catch (error) {
+    logError("deleting app (unexpected)", error, { id });
+    throw error;
   }
-
-  return true;
 }
 
 export async function getConversation(appId: string): Promise<Conversation> {
@@ -235,7 +245,7 @@ export async function getConversation(appId: string): Promise<Conversation> {
 export async function addMessage(
   appId: string,
   role: "user" | "assistant",
-  content: string,
+  content: string
 ): Promise<Message> {
   try {
     const { data, error } = await supabase
@@ -249,10 +259,10 @@ export async function addMessage(
       .single();
 
     if (error) {
-      logError("adding message", error, { 
-        appId, 
-        role, 
-        contentPreview: content.substring(0, 100) + "..." 
+      logError("adding message", error, {
+        appId,
+        role,
+        contentPreview: content.substring(0, 100) + "...",
       });
       throw new Error("Failed to add message");
     }
@@ -265,10 +275,10 @@ export async function addMessage(
       appId: data.app_id,
     };
   } catch (err) {
-    logError("adding message (unexpected)", err, { 
-      appId, 
-      role, 
-      contentPreview: content.substring(0, 100) + "..." 
+    logError("adding message (unexpected)", err, {
+      appId,
+      role,
+      contentPreview: content.substring(0, 100) + "...",
     });
     throw err;
   }

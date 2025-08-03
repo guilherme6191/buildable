@@ -3,6 +3,11 @@ export function logError(
   error: unknown,
   metadata?: Record<string, unknown>
 ): void {
+  // Skip logging Next.js redirect "errors" - these are expected behavior
+  if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+    return;
+  }
+
   console.error(`Error in ${context}:`, {
     error: error instanceof Error ? error.message : String(error),
     stack: error instanceof Error ? error.stack : undefined,

@@ -2,7 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createApp, updateApp, deleteApp, addMessage, getApp, getConversation } from "@/lib/data";
+import {
+  createApp,
+  updateApp,
+  deleteApp,
+  addMessage,
+  getApp,
+  getConversation,
+} from "@/lib/data";
 import { CreateAppData, UpdateAppData } from "@/lib/types";
 import { processAIRequest } from "@/lib/ai-service";
 import { validateMessage, validateAppName } from "@/lib/validation";
@@ -25,7 +32,10 @@ export async function createAppAction(formData: FormData) {
     revalidatePath("/");
     redirect(`/apps/${app.slug}`);
   } catch (error) {
-    logError("createAppAction", error);
+    // Don't log redirect "errors" - they're expected behavior
+    if (!(error instanceof Error && error.message === "NEXT_REDIRECT")) {
+      logError("createAppAction", error);
+    }
     throw error;
   }
 }
@@ -54,7 +64,7 @@ export async function updateAppPreviewAction(
   id: string,
   html: string,
   css: string,
-  js?: string,
+  js?: string
 ) {
   const updateData: UpdateAppData = {
     preview: { html, css, js },
@@ -67,9 +77,9 @@ export async function updateAppPreviewAction(
 export async function sendMessageAction(appId: string, message: string) {
   try {
     validateMessage(message, appId);
-    
+
     await addMessage(appId, "user", message.trim());
-    
+
     const app = await getApp(appId);
     if (!app) {
       logError("sendMessageAction", "App not found", { appId });
@@ -77,7 +87,7 @@ export async function sendMessageAction(appId: string, message: string) {
     }
 
     const conversation = await getConversation(appId);
-    
+
     await processAIRequest({
       appId,
       userMessage: message,

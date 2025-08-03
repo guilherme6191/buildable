@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { getApps } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
-import { CreateAppForm } from "@/components/create-app-form";
+import { CreateAppForm } from "@/components/app-form";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function HomePage() {

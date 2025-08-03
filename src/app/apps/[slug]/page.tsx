@@ -3,6 +3,7 @@ import { getAppBySlug, getConversation } from "@/lib/data";
 import { ChatInterface } from "@/components/chat-interface";
 import { PreviewWindow } from "@/components/preview-window";
 import { DownloadProjectButton } from "@/components/download-project-button";
+import { AppForm } from "@/components/app-form";
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -56,7 +57,10 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
                       </p>
                     )}
                   </div>
-                  <DownloadProjectButton app={app} className="ml-4" />
+                  <div className="flex items-center gap-2 ml-4">
+                    <AppForm mode="edit" app={app} />
+                    <DownloadProjectButton app={app} />
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
