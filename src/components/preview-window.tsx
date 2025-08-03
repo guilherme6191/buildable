@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Monitor, Tablet, Smartphone, Eye, RefreshCw } from "lucide-react";
+import { Eye, RefreshCw, FileText, Palette, Zap } from "lucide-react";
 import { App } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 
@@ -9,10 +9,10 @@ interface PreviewWindowProps {
   app: App;
 }
 
+type ViewMode = "preview" | "html" | "css" | "js";
+
 export function PreviewWindow({ app }: PreviewWindowProps) {
-  const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">(
-    "desktop",
-  );
+  const [viewMode, setViewMode] = useState<ViewMode>("preview");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const getPreviewContent = () => {
@@ -104,65 +104,76 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
     `;
   };
 
-  const getFrameWidth = () => {
-    switch (viewMode) {
-      case "mobile":
-        return "375px";
-      case "tablet":
-        return "768px";
+  const getViewModeIcon = (mode: ViewMode) => {
+    switch (mode) {
+      case "html":
+        return <FileText className="w-4 h-4" />;
+      case "css":
+        return <Palette className="w-4 h-4" />;
+      case "js":
+        return <Zap className="w-4 h-4" />;
       default:
-        return "100%";
+        return <Eye className="w-4 h-4" />;
     }
   };
 
-  const getViewModeIcon = (mode: "desktop" | "tablet" | "mobile") => {
+  const getFileContent = (mode: ViewMode): string => {
     switch (mode) {
-      case "mobile":
-        return <Smartphone className="w-4 h-4" />;
-      case "tablet":
-        return <Tablet className="w-4 h-4" />;
+      case "html":
+        return app.preview?.html || "<!-- No HTML content yet -->";
+      case "css":
+        return app.preview?.css || "/* No CSS content yet */";
+      case "js":
+        return app.preview?.js || "// No JavaScript content yet";
       default:
-        return <Monitor className="w-4 h-4" />;
+        return "";
     }
   };
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    // Simulate refresh delay
+
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
   return (
     <div className="h-full flex flex-col">
-      {/* Modern Preview Header */}
       <div className="p-6 border-b border-border/50 bg-card">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-              <Eye className="w-5 h-5 text-white" />
+              {getViewModeIcon(viewMode)}
             </div>
             <div>
-              <h2 className="text-lg font-semibold">Live Preview</h2>
+              <h2 className="text-lg font-semibold">
+                {viewMode === "preview"
+                  ? "Live Preview"
+                  : viewMode.toUpperCase()}
+              </h2>
               <p className="text-sm text-muted-foreground">
-                See your changes in real-time
+                {viewMode === "preview"
+                  ? "See your changes in real-time"
+                  : `View ${viewMode.toUpperCase()} source code`}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="gap-2"
-            >
-              <RefreshCw
-                className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
-              />
-              Refresh
-            </Button>
+            {viewMode === "preview" && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className="gap-2"
+              >
+                <RefreshCw
+                  className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
+                />
+                Refresh
+              </Button>
+            )}
             <div className="flex gap-1 bg-muted/50 p-1 rounded-lg">
-              {(["desktop", "tablet", "mobile"] as const).map((mode) => (
+              {(["preview", "html", "css", "js"] as const).map((mode) => (
                 <Button
                   key={mode}
                   variant={viewMode === mode ? "default" : "ghost"}
@@ -179,31 +190,10 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
         </div>
       </div>
 
-      {/* Modern Preview Content */}
-      <div className="flex-1 p-6 bg-gradient-to-br from-muted/20 via-background to-muted/10">
-        <div className="h-full flex items-center justify-center">
-          <div
-            className={`bg-card rounded-xl shadow-2xl overflow-hidden transition-all duration-500 border border-border/50 ${
-              viewMode === "mobile"
-                ? "shadow-xl"
-                : viewMode === "tablet"
-                  ? "shadow-lg"
-                  : "shadow-2xl"
-            }`}
-            style={{
-              width: getFrameWidth(),
-              height:
-                viewMode === "mobile"
-                  ? "667px"
-                  : viewMode === "tablet"
-                    ? "80%"
-                    : "100%",
-              maxWidth: "100%",
-              maxHeight: "100%",
-            }}
-          >
-            {/* Browser-like header for desktop */}
-            {viewMode === "desktop" && (
+      <div className="flex-1 bg-gradient-to-br from-muted/20 via-background to-muted/10">
+        {viewMode === "preview" ? (
+          <div className="h-full p-6">
+            <div className="h-full bg-card rounded-xl shadow-2xl overflow-hidden border border-border/50">
               <div className="h-10 bg-muted/50 border-b border-border/50 flex items-center px-4 gap-2">
                 <div className="flex gap-2">
                   <div className="w-3 h-3 bg-red-400 rounded-full"></div>
@@ -216,19 +206,36 @@ export function PreviewWindow({ app }: PreviewWindowProps) {
                   </div>
                 </div>
               </div>
-            )}
-            <iframe
-              key={isRefreshing ? Date.now() : "static"}
-              srcDoc={getPreviewContent()}
-              className="w-full border-0"
-              style={{
-                height: viewMode === "desktop" ? "calc(100% - 40px)" : "100%",
-              }}
-              title={`${app.name} Preview`}
-              sandbox="allow-scripts allow-same-origin"
-            />
+              <iframe
+                key={isRefreshing ? Date.now() : "static"}
+                srcDoc={getPreviewContent()}
+                className="w-full border-0"
+                style={{ height: "calc(100% - 40px)" }}
+                title={`${app.name} Preview`}
+                sandbox="allow-scripts allow-same-origin"
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="h-full p-6">
+            <div className="h-full bg-card rounded-xl shadow-lg overflow-hidden border border-border/50">
+              <div className="h-10 bg-muted/50 border-b border-border/50 flex items-center px-4">
+                <div className="flex items-center gap-2">
+                  {getViewModeIcon(viewMode)}
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {viewMode}.{viewMode === "js" ? "js" : viewMode}
+                  </span>
+                </div>
+              </div>
+              <pre
+                className="overflow-auto p-4 text-sm font-mono leading-relaxed text-foreground bg-background/50"
+                style={{ height: "calc(100% - 40px)" }}
+              >
+                <code>{getFileContent(viewMode)}</code>
+              </pre>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

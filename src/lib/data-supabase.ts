@@ -7,7 +7,6 @@ import {
   UpdateAppData,
 } from "./types";
 
-// App CRUD operations
 export async function getApps(): Promise<App[]> {
   const { data, error } = await supabase
     .from("apps")
@@ -262,7 +261,6 @@ export async function deleteApp(id: string): Promise<boolean> {
   return true;
 }
 
-// Message/Conversation operations
 export async function getConversation(appId: string): Promise<Conversation> {
   try {
     const { data, error } = await supabase

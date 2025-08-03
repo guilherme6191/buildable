@@ -43,12 +43,10 @@ export function ChatInterface({ appId, conversation }: ChatInterfaceProps) {
         error,
       });
 
-      // Show user-friendly error message
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
       alert(`Failed to send message: ${errorMessage}\n\n`);
 
-      // Restore message so user can try again
       setMessage(currentMessage);
     } finally {
       setIsLoading(false);
@@ -57,7 +55,6 @@ export function ChatInterface({ appId, conversation }: ChatInterfaceProps) {
 
   return (
     <div className="h-full flex flex-col">
-      {/* Modern Chat Header */}
       <div className="p-6 border-b border-border/50">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
@@ -72,10 +69,8 @@ export function ChatInterface({ appId, conversation }: ChatInterfaceProps) {
         </div>
       </div>
 
-      {/* Messages Area */}
       <div className="flex-1 overflow-y-auto">
         {conversation.messages.length === 0 ? (
-          /* Empty State */
           <div className="h-full flex items-center justify-center p-6">
             <div className="text-center max-w-md">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">

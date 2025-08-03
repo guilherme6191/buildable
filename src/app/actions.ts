@@ -81,10 +81,8 @@ export async function sendMessageAction(appId: string, message: string) {
 
     console.log("Sending message:", { appId, messageLength: message.length });
 
-    // Add user message
     await addMessage(appId, "user", message.trim());
 
-    // Get current app to access existing code
     const { getApp } = await import("@/lib/data");
     const app = await getApp(appId);
 
@@ -94,27 +92,20 @@ export async function sendMessageAction(appId: string, message: string) {
     }
 
     try {
-      // Get conversation history for context
       const { getConversation } = await import("@/lib/data");
       const conversation = await getConversation(appId);
 
-      // Call Anthropic API to generate code with full conversation context
       const result = await generateAppCode(
         message.trim(),
-        conversation.messages || [], // Pass the full conversation history, ensure it's an array
+        conversation.messages || [],
         app.preview?.html,
         app.preview?.css,
         app.preview?.js,
         app.name,
       );
 
-      // TODO: Remove this
-      console.log("🚀 ~ sendMessageAction ~ result:", result);
-
-      // Add AI response
       await addMessage(appId, "assistant", result.explanation);
 
-      // Update app preview if new code was generated
       if (result.html || result.css || result.js) {
         await updateAppPreviewAction(
           appId,

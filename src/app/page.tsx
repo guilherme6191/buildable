@@ -18,7 +18,6 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Navigation */}
       <nav className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
@@ -34,7 +33,6 @@ export default async function HomePage() {
       </nav>
 
       <div className="container mx-auto px-4 py-12">
-        {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
             buildable
@@ -46,7 +44,6 @@ export default async function HomePage() {
         </div>
 
         {apps.length === 0 ? (
-          /* Empty State */
           <div className="max-w-2xl mx-auto text-center">
             <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-2xl p-12 border">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -64,7 +61,6 @@ export default async function HomePage() {
             </div>
           </div>
         ) : (
-          /* Apps Grid */
           <div className="space-y-8">
             <div className="flex justify-between items-center">
               <div>

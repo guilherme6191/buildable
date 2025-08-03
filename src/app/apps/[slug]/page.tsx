@@ -27,7 +27,6 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
 
     return (
       <div className="h-screen flex flex-col bg-background">
-        {/* Modern Header */}
         <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
@@ -60,14 +59,10 @@ export default async function AppDetailPage({ params }: AppDetailPageProps) {
           </div>
         </header>
 
-        {/* Modern Split Layout */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Chat Panel */}
           <div className="w-1/2 border-r border-border/50 bg-card">
             <ChatInterface appId={app.id} conversation={conversation} />
           </div>
-
-          {/* Preview Panel */}
           <div className="w-1/2 bg-muted/30">
             <PreviewWindow app={app} />
           </div>
